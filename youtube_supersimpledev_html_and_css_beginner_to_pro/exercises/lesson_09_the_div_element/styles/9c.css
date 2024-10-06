@@ -1,0 +1,21 @@
+.container {
+  padding-left: 16px;
+  padding-right: 16px;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  border-style: solid;
+  border-width: 1px;
+  border-color: rgb(187, 187, 187);
+  width: 300px;
+}
+
+.question {
+  font-family: Arial;
+  font-size: 18px;
+  margin-top: 0;
+  margin-bottom: 18px;
+}
+
+button {
+  font-size: 14px;
+}

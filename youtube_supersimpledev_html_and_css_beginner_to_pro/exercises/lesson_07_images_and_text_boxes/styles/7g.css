@@ -1,0 +1,36 @@
+.cat-image {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  object-position: center center;
+  border-radius: 25px;
+  vertical-align: middle;
+}
+
+.twitter-text-input {
+  font-size: 16px;
+  border: none;
+  width: 260px;
+
+  margin-left: 4px;
+  margin-right: 4px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  padding-left: 4px;
+  padding-right: 4px;
+  vertical-align: middle;
+}
+
+.tweet-button {
+  font-size: 16px;
+  color: white;
+  background-color: rgb(36, 126, 245);
+  border: none;
+  border-radius: 17px;
+  padding-left: 14px;
+  padding-right: 14px;
+  padding-top: 7px;
+  padding-bottom: 7px;
+
+  vertical-align: middle;
+}

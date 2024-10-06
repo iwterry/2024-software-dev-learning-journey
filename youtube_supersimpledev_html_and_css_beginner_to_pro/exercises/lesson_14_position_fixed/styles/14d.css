@@ -1,0 +1,58 @@
+body {
+  height: 3000px;
+}
+
+p {
+  font-family: Arial;
+  margin: 0;
+}
+
+.fixed-right-sidebar {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  background-color: green;
+  color: white;
+  width: 100px;
+}
+
+.overlay {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal {
+  background-color: white;
+  width: 400px;
+
+  padding-top: 16px;
+  padding-bottom: 16px;
+  padding-left: 16px;
+  padding-left: 16px;
+
+  border-radius: 4px;
+}
+
+.modal-title {
+  font-weight: 700;
+  font-size: 24px;
+  margin-bottom: 14px;
+}
+
+.modal-intro {
+  font-size: 16px;
+  margin-bottom: 12px;
+}
+
+.modal-close-button {
+  cursor: pointer;
+}

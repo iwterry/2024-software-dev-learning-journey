@@ -1,0 +1,473 @@
+####################################
+SETUP PROJECT TO USE REACT QUERY
+####################################
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient();
+
+ReactDOM.createRoot(
+  document.getElementById('root') as HTMLElement
+).render(
+  <React.StrictMode>
+    <QueryClientProvider client={queryClient}>
+      <App />
+    </QueryClientProvider>
+  </React.StrictMode>
+);
+
+
+####################################################################
+FETCHING DATA WITH ERROR HANDLING AND LOADING INDICATOR
+####################################################################
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
+
+interface Todo {
+  id: number;
+  title: string;
+  userId: number;
+  completed: boolean;
+}
+
+const TodoList = () => {
+
+ const fetchTodos = () => {
+    return axios
+      .get<Todo[]>('https://jsonplaceholder.typicode.com/todos')
+      .then((res) => res.data);
+  };
+
+  // all errors in Axios are derived from Error
+  const query = useQuery<Todo[], Error> ({
+    queryKey: ['todos'],
+    queryFn: fetchTodos
+  });
+
+  const { data: todos, error, isLoading } = query;
+
+  if (isLoading) return <p>Loading</p>;
+
+  if (error) return <p>{error.message}</p>;
+
+  return (
+    <ul>
+      {todos?.map((todo) => (
+        <li key={todo.id}>
+          {todo.title}
+        </li>
+      ))}
+    </ul>
+  );
+};
+
+export default TodoList;
+
+#########################################################
+CREATING A CUSTOM QUERY HOOK AND USING IT
+#########################################################
+---------------------- FILE useTodos.ts ------------------------
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+
+interface Todo {
+  id: number;
+  title: string;
+  userId: number;
+  completed: boolean;
+}
+
+export default function useTodos() {
+  const fetchTodos = () => {
+    return axios
+      .get<Todo[]>('https://jsonplaceholder.typicode.com/todos')
+      .then((res) => res.data);
+  };
+
+  // all errors in Axios is derived from Error
+  const query = useQuery<Todo[], Error> ({
+    queryKey: ['todos'],
+    queryFn: fetchTodos
+  });
+
+  return query;
+}
+---------------------------- END ----------------------------
+
+-------------------- FILE TodoList.tsx ----------------------
+import useTodos from "./hooks/useTodos";
+
+const TodoList = () => {
+  const { data: todos, error, isLoading } = useTodos();
+
+  if (isLoading) return <p>Loading ...</p>;
+
+  if (error) return <p>{error.message}</p>;
+
+  return (
+    <ul>
+      {todos?.map((todo) => (
+        <li key={todo.id}>
+          {todo.title}
+        </li>
+      ))}
+    </ul>
+  );
+};
+
+export default TodoList;
+------------------------------ END ---------------------------------
+
+###########################################################
+IMPORTING REACT QUERY DEVTOOLS
+###########################################################
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+
+const queryClient = new QueryClient();
+
+ReactDOM.createRoot(
+  document.getElementById('root') as HTMLElement
+).render(
+  <React.StrictMode>
+    <QueryClientProvider client={queryClient}>
+      <App />
+      <ReactQueryDevtools />
+    </QueryClientProvider>
+  </React.StrictMode>
+);
+
+###########################################################
+CUSTOMIZING QUERY SETTINGS GLOBALLY
+###########################################################
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 3, // if a query fails, ReactQuery will try 3 more times
+                // NOTE: this is the default value
+      cacheTime: 300_000, // if a query has no observers (which means that no component is using that query), then that query is considered inactive.
+                // NOTE: this value is in milliseconds, so this is 5 minutes; thus, an inactive query will be removed from the cache after 5 minutes
+                // NOTE: this is the default value
+      staleTime: 0, // 0 means that the moment we get a piece of data, it is treated as old (or stale), so the next time we need the same piece of data, ReactQuery will refetch fresh data from the backend
+                // NOTE: this value is in milliseconds
+                // NOTE: this is the default value
+                // NOTE: ReactQuery will automatically refresh stale data under the following three situations:
+                //   - when the network is reconnected
+                //   - when a component is mounted
+                //   - when the window is refocused
+      refetchOnWindowFocus: true, // will refetched when the window is refocused
+                                  // NOTE: this is the default value
+      refetchOnMount: true,       // will refetched when a component is first mounted
+                                  // NOTE: this is the default value
+      refetchOnReconnect: true,   // will refetched when the network is reconnected
+                                  // NOTE: this is the default value
+    }
+  }
+});
+
+// The process ReactQuery goes through when refetching when data is stale
+//  1) ReactQuery will attempt to refetch new data from the backend, while
+//       at the same time returning the data from the cache to the application
+//       (allowing to show the user the cache data while getting the latest
+//       data in the background)
+//  2) Once ReactQuery has the updated data, it will update the cache and notifies
+//       the component that new data is available and the component will be
+//       rerendered with the updated data
+
+ReactDOM.createRoot(
+  document.getElementById('root') as HTMLElement
+).render(
+  <React.StrictMode>
+    <QueryClientProvider client={queryClient}>
+      <App />
+      <ReactQueryDevtools />
+    </QueryClientProvider>
+  </React.StrictMode>
+);
+
+
+###########################################################
+CUSTOMIZING QUERY SETTINGS FOR A SPECIFIC QUERY
+###########################################################
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+
+interface Todo {
+  id: number;
+  title: string;
+  userId: number;
+  completed: boolean;
+}
+
+export default function useTodos() {
+  const fetchTodos = () => {
+    return axios
+      .get<Todo[]>('https://jsonplaceholder.typicode.com/todos')
+      .then((res) => res.data);
+  };
+
+  // all errors in Axios is derived from Error
+  const query = useQuery<Todo[], Error> ({
+    queryKey: ['todos'],
+    queryFn: fetchTodos,
+    staleTime: 10_000 // all the settings using QueryClient seen earlier can be overrided on a per query basis.
+                      // this is an example of doing such a thing
+  });
+
+  return query;
+}
+
+########################################################
+PARAMETERIZED QUERIES
+########################################################
+-------------------- FILE: usePosts.ts --------------------
+
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
+
+interface Post {
+  id: number;
+  title: string;
+  body: string;
+  userId: number;
+}
+
+export default function usePosts(userId?: number|null) {
+  function fetchPosts() {
+    return  axios
+    .get<Post[]>('https://jsonplaceholder.typicode.com/posts', {   
+      params: {
+        userId 
+      }
+    })
+    .then((res) => res.data);
+  }
+
+    const query = useQuery<Post[], Error>({
+      queryKey: ['users', userId, 'posts'], // you can also do the following: userId ? ['users', userId, 'posts'] : ['posts']
+                                            // ReactQuery will re-execute the query when the userId changes
+      queryFn: fetchPosts,
+      staleTime: 10_000
+    })
+
+    return query;
+}
+--------------------------------- END ------------------------------------
+
+------------------------------- FILE: PostList.tsx -----------------------
+import { useState } from "react";
+import usePosts from "./hooks/usePosts";
+
+const PostList = () => {
+  const [ userId, setUserId ] = useState<number|null>(null);
+  const { data: posts, error, isLoading } = usePosts(userId);
+
+  if (isLoading) return <p>Loading...</p>;
+
+  if (error) return <p>{error.message}</p>;
+
+  return (
+    <>
+      <select onChange={(event) => setUserId(Number.parseInt(event.target.value) || null)} value={userId || ''}>
+        <option value=""></option> 
+        <option value="1">User 1</option> 
+        <option value="2">User 2</option> 
+        <option value="3">User 3</option> 
+      </select>
+      <ul>
+        {posts?.map((post) => (
+          <li key={post.id}>
+            {post.title}
+          </li>
+        ))}
+      </ul>
+    </>
+  );
+};
+
+export default PostList;
+------------------------------- END -------------------------------------
+
+########################################################################
+PAGINATED QUERIES
+########################################################################
+----------------------- PAGE: usePost.ts -------------------------------
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
+
+interface Post {
+  id: number;
+  title: string;
+  body: string;
+  userId: number;
+}
+
+interface PostQuery {
+  page: number;
+  pageSize: number;
+}
+
+export default function usePosts(postQuery: PostQuery) {
+  function fetchPosts() {
+    return  axios
+    .get<Post[]>('https://jsonplaceholder.typicode.com/posts', {   
+      params: { // for this particular API only
+        _start: (postQuery.page - 1) * postQuery.pageSize,
+        _limit: postQuery.pageSize
+      }
+    })
+    .then((res) => res.data);
+  }
+
+    const query = useQuery<Post[], Error>({
+      queryKey: ['posts', postQuery ], // you can also do the following: userId ? ['users', userId, 'posts'] : ['posts']
+                                            // ReactQuery will re-execute the query when the userId changes
+      queryFn: fetchPosts,
+      staleTime: 10_000,
+      keepPreviousData: true  // not necessary but will help keep the page from jumping up as data load when changing pages
+    })
+
+    return query;
+}
+---------------------------------- END ------------------------------
+
+-------------------------- FILE: PostList.tsx ------------------------
+import { useState } from "react";
+import usePosts from "./hooks/usePosts";
+
+const PostList = () => {
+  const pageSize = 10;
+  const [ page, setPage ] = useState(1);
+  const { data: posts, error, isLoading } = usePosts({ page, pageSize });
+
+  if (isLoading) return <p>Loading...</p>;
+
+  if (error) return <p>{error.message}</p>;
+
+  return (
+    <>
+      <ul>
+        {posts?.map((post) => (
+          <li key={post.id}>
+            {post.title}
+          </li>
+        ))}
+      </ul>
+      <div>
+        <button disabled={page <= 1} onClick={() => setPage(page - 1)}>Prev</button>
+        <button onClick={() => setPage(page + 1)}>Next</button>
+      </div>
+    </>
+  );
+};
+
+export default PostList;
+---------------------------------- END -------------------------------
+
+###########################################################################
+INFINITE QUERIES
+###########################################################################
+----------------------- FILE: usePosts.ts -------------------------------
+import { useInfiniteQuery } from '@tanstack/react-query';
+import axios from 'axios';
+
+interface Post {
+  id: number;
+  title: string;
+  body: string;
+  userId: number;
+}
+
+interface PostQuery {
+  pageSize: number;
+}
+
+export default function usePosts(postQuery: PostQuery) {
+  function fetchPosts({ pageParam = 1 /* for the first page */}) {
+    return  axios
+    .get<Post[]>('https://jsonplaceholder.typicode.com/posts', {   
+      params: { // for this particular API only
+        _start: (pageParam - 1) * postQuery.pageSize,
+        _limit: postQuery.pageSize
+      }
+    })
+    .then((res) => res.data);
+  }
+
+    const query = useInfiniteQuery<Post[], Error>({
+      queryKey: ['posts', postQuery ],
+      queryFn: fetchPosts,
+      staleTime: 10_000,
+      keepPreviousData: true,  // not necessary but will help keep the page from jumping up as data load when changing pages
+      getNextPageParam: (lastPage, allPages ) => {
+        // allPages is an array of an array of posts
+	//   - NOTE: allPages is always an array of something, but in this case, it is an array of arrays because we get back
+	//       something with the data type Post[] (and this is why allPages is an array of array of posts)
+        // allPages[0] represents the array of posts for the first page
+        // allPages[1] represents the array of posts for the second page
+        // and so on
+
+        // allPages.length will grow by one for each new page
+
+        // so to identify the current page number, use allPages.length
+        // and so the next page will be allPages.length + 1
+
+        // when there is no more data, https://jsonplaceholder.typicode.com/posts will return an empty array
+        
+        // the value undefined is used to say there is no next page when doing infinite queries with ReactQuery
+
+        return lastPage.length > 0 ? allPages.length  + 1 : undefined; 
+        
+      }
+    })
+
+    return query;
+}
+----------------------------------- END --------------------------------------
+
+------------------------------ FILE: PostList.tsx -----------------------------
+import usePosts from "./hooks/usePosts";
+
+const PostList = () => {
+  
+  // No state is used to keep track of page numbers when doing infinite queries.
+  // ReactQuery will handle pagination automatically
+  // const [ page, setPage ] = useState(1);     // <-- not used for infinite queries
+
+  const pageSize = 10;
+
+  const { data: posts, error, isLoading, fetchNextPage, isFetchingNextPage } = usePosts({ pageSize });
+
+  if (isLoading) return <p>Loading...</p>;
+
+  if (error) return <p>{error.message}</p>;
+
+  return (
+    <>
+      <ul>
+        {posts.pages.map((page) => (
+          page.map((post) => (
+            <li key={post.id}>
+              {post.title}
+            </li>
+          ))
+        ))}
+      </ul>
+      <button onClick={() => fetchNextPage()} disabled={isFetchingNextPage}>Load More</button>
+    </>
+  );
+};
+
+export default PostList;
+--------------------------------------- END -----------------------------------------

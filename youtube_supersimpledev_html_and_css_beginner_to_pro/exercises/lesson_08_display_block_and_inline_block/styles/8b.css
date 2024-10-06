@@ -1,0 +1,15 @@
+.survey-ask {
+  display: inline-block;
+  width: 230px;
+  font-size: 18px;
+  vertical-align: middle;
+}
+
+.yes-button, .no-button {
+  font-size: 16px;
+  vertical-align: middle;
+}
+
+.no-button {
+
+}

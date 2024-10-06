@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="./index..css">
+    <title>01 - Checkout Page</title>
+  </head>
+  <body>
+    <div class="main-container">
+      <div class="checkout-details">
+        <p class="checkout-details-heading">Checkout</p>
+        <p class="checkout-details-num-cart">There are 3 products in your cart</p>
+        <div class="checkout-details-billing-form">
+          <p class="checkout-details-billing-heading">Billing Details</p>
+          <div class="billing-input-container">
+            <input class="billing-text-input" type="text" placeholder="First Name*">
+            <input class="billing-text-input" type="text" placeholder="Last Name*">
+          </div>
+          <div class="billing-input-container">
+            <input class="billing-text-input" type="text" placeholder="address*">
+            <input class="billing-text-input" type="text" placeholder="address Line 2*">
+          </div>
+          <div class="billing-input-container">
+            <select class="billing-input-country-selector">
+              <option>Country*</option>
+              <option>United States</option>
+            </select>
+            <input class="billing-text-input" type="text" placeholder="City/Town*">
+          </div>
+          <div class="billing-input-container">
+            <input class="billing-text-input" type="text" placeholder="Postcode/Zip*">
+            <input class="billing-text-input" type="text" placeholder="Phone*">
+          </div>
+          <div class="billing-input-container">
+            <textarea class="billing-additional-info-input" rows="9">Address Information</textarea>
+          </div>
+          <div class="checkout-checkbox-container">
+            <label class="input-label">
+              <input class="checkout-checkbox" type="checkbox"> Create Account
+            </label>
+            <label class="input-label">
+              <input class="checkout-checkbox" type="checkbox"> Ship to a different address
+            </label>
+          </div>
+          <p class="apply-coupon-text">Apply coupon to get discount</p>
+          <input class="coupon-code-input" type="text" placeholder="Coupon code">
+          <button type="button" class="apply-coupon-button">Apply Code</button>
+        </div>
+      </div>
+      <div class="order-info">
+        <p class="order-info-heading">Your Order</p>
+        <div class="products-container">
+          <p class="products-heading">
+            <span>Product</span>
+            <span class="subtotal-column">Subtotal</span>
+          </p>
+          <div class="products-item">
+            <div class="product-details">
+              <img class="product-image" src="../images/1.1.jpg" alt="men's white t-shirt">
+              <div class="product-info-container">
+                <p class="product-name">Men's T-shirt</p>
+                <div class="product-attributes">
+                  <p class="product-attribute">White</p>
+                  <p class="product-attribute">XL</p>
+                  <p class="product-attribute">1x36.00</p>
+                </div>
+              </div>
+            </div>
+            <p class="product-price">$36.00</p>
+          </div>
+          <div class="products-item">
+            <div class="product-details">
+              <img class="product-image" src="../images/1.2.jpg" alt="men's blue t-shirt">
+              <div class="product-info-container">
+                <p class="product-name">Men's T-shirt</p>
+                <div class="product-attributes">
+                  <p class="product-attribute">Blue</p>
+                  <p class="product-attribute">XL</p>
+                  <p class="product-attribute">1x36.00</p>
+                </div>
+              </div>
+            </div>
+            <p class="product-price">$36.00</p>
+          </div>
+          <div class="products-item">
+            <div class="product-details">
+              <img class="product-image" src="../images/1.3.jpg" alt="women's blac t-shirt">
+              <div class="product-info-container">
+                <p class="product-name">Women's T-shirt</p>
+                <div class="product-attributes">
+                  <p class="product-attribute">Black</p>
+                  <p class="product-attribute">L</p>
+                  <p class="product-attribute">1x36.00</p>
+                </div>
+              </div>
+            </div>
+            <p class="product-price">$36.00</p>
+          </div>
+
+          <div class="products-item">
+            <div class="price-breakdown-container">
+              <p class="price-breakdown">
+                <span>Subtotal</span>
+                <span>$108</span>
+              </p>
+              <p class="price-breakdown">
+                <span>Shipping Cost (+)</span>
+                <span>$10.85</span>
+              </p>
+              <p class="price-breakdown">
+                <span>Discount (-)</span>
+                <span>$9.00</span>
+              </p>
+            </div>
+          </div>
+
+          <div class="products-item">
+            <p class="total-price">
+              <span>Total Payable</span>
+              <span>$109.85</span>
+            </p>
+          </div>
+        </div>
+
+        <div class="payment-info-container">
+          <p class="payment-info-heading">
+            Payment
+          </p>
+          <div class="payment-types-input-container">
+            <label class="input-label">
+              <input type="radio" name="payment-type" value="direct bank transfer"> Direct bank transfer
+            </label>
+            <label class="input-label">
+              <input type="radio" name="payment-type" value="cash on delivery"> Cash on delivery
+            </label>
+            <label class="input-label">
+              <input type="radio" name="payment-type" value="online gateway" checked> Online Gateway
+            </label>
+          </div>
+
+        </div>
+
+        <button class="place-order-button" type="submit">Place Order</button>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,62 @@
+#######################################################
+MANAGING APPLICATION STATE WITH ZUSTAND
+#######################################################
+
+-------------------- FILE: store.ts ----------------------
+import { create } from "zustand";
+
+interface CounterStore {
+  counter: number;
+  increment: () => void;
+  reset: () => void;
+}
+
+const useCounterStore = create<CounterStore>((set) => {
+  return {
+    counter: 0,
+    increment: () => {
+      set((store) => {
+        return {
+          counter: store.counter + 1
+        };
+      });
+    },
+    reset: function() {
+      set((store) => {
+        return {
+          counter: 0
+        };
+      });
+    }
+  }
+});
+
+export default useCounterStore;
+------------------------- END ---------------------
+
+-------------------- FILE: Counter.tsx ----------------
+import useCounterStore from './store';
+
+const Counter = () => {
+  const { counter, increment, reset } = useCounterStore();
+
+  return (
+    <div>
+      Counter ({counter})
+      <button onClick={increment}>
+        Increment
+      </button>
+      <button onClick={reset}>
+        Reset
+      </button>
+    </div>
+  );
+};
+
+export default Counter;
+------------------------- END -------------------------
+
+#############################################################
+PREVENTING UNNECESSARY RENDERS WITH SELECTORS
+#############################################################
+- you can choose which changes of the state will cause rerendering by using selectors

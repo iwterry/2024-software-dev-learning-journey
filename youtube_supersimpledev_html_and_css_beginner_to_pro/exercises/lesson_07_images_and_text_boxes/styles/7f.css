@@ -1,0 +1,37 @@
+p {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.email-input-label {
+  color: gray;
+  margin-bottom: 4px;
+}
+
+.email-input {
+  border-width: 2px;
+  border-style: solid;
+  border-color: gray;
+  border-radius: 4px;
+
+  font-size: 16px;
+  width: 346px;
+}
+
+.terms-text {
+  font-size: 15px;
+  color: gray;
+  margin-top: 14px;
+  margin-bottom: 14px;
+}
+
+.agree-button {
+  color: white;
+  background-color: rgb(76, 76, 255);
+  border: none;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  font-size: 16px;
+  width: 350px;
+  border-radius: 21px;
+}

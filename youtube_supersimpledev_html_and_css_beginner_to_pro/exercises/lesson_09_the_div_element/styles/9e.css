@@ -1,0 +1,51 @@
+.container {
+  padding-left: 12px;
+  padding-right: 12px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+  border-radius: 5px;
+  display: inline-block;
+}
+
+.cat-image {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  object-position: center center;
+  border-radius: 25px;
+
+  vertical-align: middle;
+}
+
+.search-input {
+  font-size: 16px;
+  border: none;
+  width: 270px;
+  padding-left: 5px;
+  padding-right: 5px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  margin-left: 5px;
+  margin-right: 5px;
+  
+  vertical-align: middle;
+}
+
+.tweet-button {
+  border: none;
+  color: white;
+  background-color: rgb(68, 118, 255);
+  font-size: 16px;
+  font-weight: bold;
+
+  padding-left: 16px;
+  padding-right: 16px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  border-radius: 17px;
+  cursor: pointer;
+
+  vertical-align: middle;
+}

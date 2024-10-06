@@ -1,0 +1,333 @@
+#############################################
+USING A REDUCER WITH SIMPLE ACTIONS
+#############################################
+- terminology:
+	- a reducer 
+		- is a function that allows us to centralize state updates in a component
+		- takes in the current state and an action and returns the new state
+	- an action
+		- is an object that describes what the user is trying to do
+		- although an action can be a string, by convention, it is a object that has a property called "type"
+  			- "type" should clearly describe the action the user is trying to take
+
+------------- FILE: counterReducer.ts -----------------
+interface Action {
+  type: 'INCREMENT' | 'RESET';
+}
+
+export default function counterReducer(state: number, action: Action): number {  
+  if (action.type === 'INCREMENT') {
+    return state + 1;
+  }
+
+  if (action.type == 'RESET') {
+    return 0;
+  }
+
+  // if the action type is something else we can do one of the following:
+  //    - return the state
+  //    - throw an error (since we are using TypeScript, this is not needed)
+  
+  return state;
+}
+--------------------------- END -----------------------------
+
+------------------------ FILE: Counter.tsx ------------------
+import { useReducer } from 'react';
+import counterReducer from './reducers/counterReducer';
+
+const Counter = () => {
+ const [state, dispatch] = useReducer(counterReducer, 0);
+
+ // dispatch is a function for triggering changes; it dispatches an action and then the reducer is called
+
+  return (
+    <div>
+      Counter ({state})
+      <button onClick={() => dispatch({ type: 'INCREMENT'})}>
+        Increment
+      </button>
+      <button onClick={() => dispatch({ type: 'RESET' })}>
+        Reset
+      </button>
+    </div>
+  );
+};
+
+export default Counter;
+-------------------------- END -----------------------
+
+#############################################
+USING A REDUCER WITH MORE COMPLEX ACTIONS
+#############################################
+------------------ FILE: taskListReducer.ts --------------
+export interface Task {
+  id: number;
+  title: string;
+}
+
+interface CreateTaskAction {
+  type: 'CREATE';
+  newTask: Task;
+}
+
+interface DeleteTaskAction {
+  type: 'DELETE';
+  idOfTaskToDelete: number;
+}
+
+type Action = CreateTaskAction | DeleteTaskAction;
+
+export default function taskListReducer(state: Task[], action: Action): Task[] {
+  switch(action.type) {
+    case "CREATE":
+      return [ action.newTask, ...state ]; 
+    case "DELETE":
+      return state.filter((task) => task.id !== action.idOfTaskToDelete);
+  }
+}
+-------------------------- END -------------------------
+
+-------------------------- FILE: TaskList.tsx ----------------
+import { useReducer } from 'react';
+import taskListReducer from './reducers/taskListReducer';
+
+const TaskList = () => {
+  const [ state, dispatch ] = useReducer(taskListReducer, []);
+
+  return (
+    <>
+      <button
+        onClick={() => dispatch({ type: 'CREATE', newTask: { id: Date.now(), title: 'Task ' + Date.now() }})}
+      >
+        Add Task
+      </button>
+      <ul>
+        {state.map((task) => (
+          <li key={task.id}>
+            <span>{task.title}</span>
+            <button onClick={() => dispatch({ type: 'DELETE', idOfTaskToDelete: task.id })}>
+              Delete
+            </button>
+          </li>
+        ))}
+      </ul>
+    </>
+  );
+};
+
+export default TaskList;
+--------------------------- END ------------------------
+
+################################################################
+INTRO TO REACT CONTEXT
+################################################################
+- react context allows sharing data without passing it down through many components in the middle
+
+STEP 1: CREATE THE CONTEXT 
+--------------------- FILE: tasksContext.ts ---------------------
+import React, { Dispatch } from "react";
+import { Task, Action as TaskAction } from "../reducers/taskListReducer";
+
+# the type of the context (and it will detail the type of data that will be stored in the context)
+#   - in this case, we are storing an object with properties "state" (which is of type Task[]) and "dispatch" (which is of type Dispatch<TaskAction>), but in other cases, we can store different type of data
+
+interface TasksContextType {
+  state: Task[];
+  dispatch: Dispatch<TaskAction>;
+}
+
+# create the context
+const TasksContext = React.createContext<TasksContextType>({} as TasksContextType);
+
+export default TasksContext;
+------------------------------- END -----------------------------
+------------------------------ FILE: taskListReducer.ts ----------------
+// NOTE: this file is not needed or related to React Context, but is being shown because it's used in other files in this example.
+
+export interface Task {
+  id: number;
+  title: string;
+}
+
+interface CreateTaskAction {
+  type: 'CREATE';
+  newTask: Task;
+}
+
+interface DeleteTaskAction {
+  type: 'DELETE';
+  idOfTaskToDelete: number;
+}
+
+export type Action = CreateTaskAction | DeleteTaskAction;
+
+export default function taskListReducer(state: Task[], action: Action): Task[] {
+  switch(action.type) {
+    case "CREATE":
+      return [ action.newTask, ...state ]; 
+    case "DELETE":
+      return state.filter((task) => task.id !== action.idOfTaskToDelete);
+  }
+}
+----------------------------- END ---------------------------------
+
+
+STEP 2: ALLOW COMPONENTS THE POSSIBILITY OF ACCESSING THE CREATED CONTEXT
+-------------------------- FILE: App.tsx --------------------------
+import { useReducer } from 'react';
+import taskListReducer from './state-management/reducers/taskListReducer';
+import NavBar from './state-management/NavBar';
+import HomePage from './state-management/HomePage';
+import TasksContext from './state-management/contexts/tasksContext';
+
+function App() {
+  const [ state, dispatch ] = useReducer(taskListReducer, []);
+
+  return (
+    <TasksContext.Provider value={{ state, dispatch }}> 
+      <NavBar />
+      <HomePage />
+    </TasksContext.Provider>
+  );
+
+  // the components NavBar and HomePage and their descendents can access the data provided in the TasksContext context
+  // using value={{ state, dispatch }} is providing the initial value of the data in the TaskContext 
+}
+------------------------ END -----------------------------
+
+STEP 3: USE CONTEXT TO GET DATA
+--------------------------- FILE: HomePage.tsx ----------------
+import TaskList from './TaskList';
+
+const HomePage = () => {
+  return <TaskList />;
+};
+
+export default HomePage;
+------------------------- END ------------------------
+------------------------ FILE: TaskList.tsx -------------------
+import { useContext } from 'react';
+import TasksContext from './contexts/tasksContext';
+
+const TaskList = () => {
+ // getting data from the TasksContext context 
+ const { state, dispatch } = useContext(TasksContext);
+
+  return (
+    <>
+      <button
+        onClick={() => dispatch({ type: 'CREATE', newTask: { id: Date.now(), title: 'Task ' + Date.now() }})}
+      >
+        Add Task
+      </button>
+      <ul>
+        {state.map((task) => (
+          <li key={task.id}>
+            <span>{task.title}</span>
+            <button onClick={() => dispatch({ type: 'DELETE', idOfTaskToDelete: task.id })}>
+              Delete
+            </button>
+          </li>
+        ))}
+      </ul>
+    </>
+  );
+};
+
+export default TaskList
+--------------------------- END ------------------------------
+
+######################################################################
+CREATING AND USING A CUSTOM PROVIDER AND A CUSTOM HOOK FOR ACCESSING CONTEXT
+#######################################################################
+
+CREATING CUSTOM PROVIDER
+---------------------------- FILE: TasksProvider.tsx ---------------------
+import { ReactNode, useReducer } from "react";
+import taskListReducer from "../reducers/taskListReducer";
+import TasksContext from "../contexts/tasksContext";
+
+interface TasksProviderProps {
+  children: ReactNode;
+}
+
+export default function TasksProvider({ children }: TasksProviderProps) {
+   const [ state, dispatch ]  = useReducer(taskListReducer, []);
+
+   return (
+    <TasksContext.Provider value={{ state, dispatch }}>
+      { children }
+    </TasksContext.Provider>
+   )
+}
+---------------------------------- END -------------------------------
+
+CREATING CUSTOM HOOK TO ACCESS CONTEXT
+------------------------------ FILE: useTasks.ts -------------------
+import { useContext } from "react";
+import TasksContext from "../contexts/tasksContext";
+
+export default function useTasks() {
+  return useContext(TasksContext);
+}
+------------------------------- END -------------------------------
+
+USING CUSTOM PROVIDER
+------------------------------ FILE: App.tsx ----------------------------
+import NavBar from './state-management/NavBar';
+import HomePage from './state-management/HomePage';
+import TasksProvider from './state-management/providers/TasksProvider';
+
+function App() {
+  return (
+    <TasksProvider>
+      <NavBar />
+      <HomePage />
+    </TasksProvider>
+  );
+}
+
+export default App;
+--------------------------------- END -----------------------------
+
+USING CUSTOM HOOK TO ACCESS CONTEXT
+---------------------------- FILE: TaskList.tsx ---------------------
+import useTasks from './hooks/useTasks';
+
+const TaskList = () => {
+  const { state, dispatch } = useTasks();
+
+  return (
+    <>
+      <button
+        onClick={() => dispatch({ type: 'CREATE', newTask: { id: Date.now(), title: 'Task ' + Date.now() }})}
+      >
+        Add Task
+      </button>
+      <ul>
+        {state.map((task) => (
+          <li key={task.id}>
+            <span>{task.title}</span>
+            <button onClick={() => dispatch({ type: 'DELETE', idOfTaskToDelete: task.id })} >
+              Delete
+            </button>
+          </li>
+        ))}
+      </ul>
+    </>
+  );
+};
+
+export default TaskList;
+-------------------------------------- END ----------------------------------
+
+NOTE: the files taskListReducer.tsx and tasksContext.ts are the same as before and have not been changed
+NOTE: the file HomePage.tsx is the same as before (so the TasksList component is still the child of the HomePage component)
+
+##############################################
+SPLITTING CONTEXTS FOR EFFICIENCY
+##############################################
+- any time a context changes, all components that use that context will be rerendered
+- a context should only hold values that are closely related and tend to change together
+- to minimize rerenders, split up a context into smaller and focused ones, each having a single responsibility

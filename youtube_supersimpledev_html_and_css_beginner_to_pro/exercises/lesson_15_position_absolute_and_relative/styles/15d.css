@@ -1,0 +1,40 @@
+body {
+  height: 3000px;
+}
+
+.close-button {
+  position: absolute;
+  top: -13px;
+  left: -15px;
+  font-size: 22px;
+  color: white;
+  background-color: black;
+  padding-left: 12px;
+  padding-right: 12px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  border: none;
+  border-radius: 22px;
+}
+
+.fixed-bottom-right {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  width: 320px;
+  height: 180px;
+  background-color: gray;
+}
+
+.video-duration {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  background-color: black;
+  color: white;
+  padding-left: 6px;
+  padding-right: 6px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  font-family: Arial;
+}

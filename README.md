@@ -1,0 +1,1 @@
+This repository contains some of the work that I have done in 2024 as part of my continuous learning journey as a software developer.

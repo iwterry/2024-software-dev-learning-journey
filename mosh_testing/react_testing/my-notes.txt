@@ -1,0 +1,76 @@
+########################################
+REACT TESTING SETUP
+########################################
+
+- install the dependencies using the following:
+
+  npm install --save-dev vitest @testing-library/react jsdom @testing-library/jest-dom @testing-library/user-event msw
+
+- create vitest.config.ts file in the root of the project directory and a setup.ts file in the tests directory of the root of the project:
+----------------------------- FILE: vitest.config.ts ------------------------------
+  import { defineConfig } from "vitest/config";
+
+  const config = defineConfig({
+    test: {
+      environment: 'jsdom',
+      globals: true,
+      setupFiles: ["tests/setup.ts"]
+    }
+  });
+
+  export default config;
+----------------------------- END --------------------------------
+
+--------------------------- FILE: tests/setup.ts -------------------
+import '@testing-library/jest-dom';
+import { server } from './mocks/server';
+
+beforeAll(() => {
+  server.listen();
+})
+
+afterEach(() => {
+  server.resetHandlers()
+})
+
+afterAll(() => {
+  server.close();
+})
+---------------------------- END ------------------------------------
+---------------------- FILE: tests/server.ts ----------------------
+import { setupServer } from 'msw/node';
+import { handlers } from './handlers';
+
+export const server = setupServer(...handlers);
+------------------------------ END --------------------------------
+---------------------- FILE: tests/handlers.ts --------------------
+import { http, HttpResponse } from 'msw';
+
+export const handlers = [
+  http.get('/categories', () => {
+    return HttpResponse.json([
+      { id: 1, name: 'Electronics' },
+      { id: 2, name: 'Beauty' },
+      { id: 3, name: 'Gardening' },
+    ])
+  })
+];
+---------------------------- END ----------------------------
+
+- add the following key-value pair in the object "compilerOptions", which is a property in the tsconfig.json file:
+  "types": ["vitest/globals"]
+
+##################################################
+TESTING COMPONENTS
+##################################################
+- we need to test
+	- how the components render
+		- we need to verify that our components render correctly under various conditions
+		- if a component has props, we should pass different props and verify the component render correctly
+	- how the components respond to user actions
+		- if a component handles user events (like clicks and inputs), we should simulate these and check to see that it behaves as expected
+
+- test behaviour and not implementation or styles
+
+
+

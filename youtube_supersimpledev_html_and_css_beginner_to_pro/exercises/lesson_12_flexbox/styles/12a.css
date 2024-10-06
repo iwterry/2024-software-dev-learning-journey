@@ -1,0 +1,13 @@
+.flexbox {
+  display: flex;
+}
+
+.div-1 {
+  width: 200px;
+  background-color: lightblue;
+}
+
+.div-2 {
+  width: 75px;
+  background-color: lightpink;
+}

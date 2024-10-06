@@ -1,0 +1,421 @@
+<ReactComponent></ReactComponent> or <ReactComponent />
+
+
+
+
+#################################################
+CHILDREN
+#################################################
+import { ReactNode } from 'react'; 
+interface Props {
+  children: ReactNode
+}
+
+function MyComponent({ children } : Props) {
+  return (
+    <>
+      { children }
+    </>
+  );
+}
+
+##################################
+STYLING COMPONENTS
+##################################
+
+- using css modules
+  import styles from './MyComponent.module.css';
+
+  function MyComponent() {
+    return (
+      <div 
+        className={`${styles["some-class-1"]  styles["some-class-2"]}`}
+      >
+        Hello
+      </div>
+    );
+  }
+
+- using inline styles
+  function MyComponent() {
+    return (
+      <div 
+        style={{ "border" : "1px solid black", "backgroundColor" : "lightblue" }}
+      >
+        Hello
+      </div>
+    );
+  }
+
+#####################################
+ACCESSING INPUT FIELDS USING REFS
+#####################################
+import { FormEventHandler, useRef } from "react";
+
+function Form() {
+  const handleSubmit: FormEventHandler = (event) => {
+    event.preventDefault();
+    console.log('form submitted');
+    if (nameRef.current) {
+      person.name = nameRef.current.value;
+    }
+
+    if (ageRef.current) {
+      person.age = Number.parseInt(ageRef.current.value);
+    }
+
+    console.log(person);
+  }
+
+  const nameRef = useRef<HTMLInputElement>(null);
+  const ageRef = useRef<HTMLInputElement>(null);
+  const person = {
+    name: '',
+    age: 0
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <div>
+        <label htmlFor="name">Name: </label> 
+        <input id="name" type="text" ref={nameRef}/>
+      </div>
+      <div>
+        <label htmlFor="age">Age: </label> 
+        <input id="age" type="number" ref={ageRef} />
+      </div>
+      <button type="submit">Submit</button>
+    </form>
+  );
+}
+
+
+######################################
+ACCESSING INPUT FIELDS USING STATE
+#######################################
+import { FormEventHandler, useState } from "react";
+
+function Form() {
+  const handleSubmit: FormEventHandler = (event) => {
+    event.preventDefault();
+    console.log('form submitted');
+
+    console.log(person);
+  }
+
+    
+  const [person, setPerson] = useState({
+    name: '',
+    age: 0
+  });
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <div>
+        <label htmlFor="name">Name: </label> 
+        <input
+          id="name"
+          type="text"
+          value={person.name}
+          onChange={(event) => setPerson({ ...person, name: event.target.value })}
+        />
+      </div>
+      <div>
+        <label htmlFor="age">Age: </label> 
+        <input
+          id="age"
+          type="number"
+          value={person.age}
+          onChange={(event) => setPerson({ ...person, age: Number.parseInt(event.target.value) })}
+        />
+      </div>
+      <button type="submit">Submit</button>
+    </form>
+  );
+}
+
+###########################################
+FORMS WITH REACT HOOK FORM WITH FIELD VALIDATION
+###########################################
+import { useForm, FieldValues } from "react-hook-form";
+
+interface FormData {
+  name: string;
+  age: number;
+}
+
+function Form() {
+  const {register, handleSubmit, formState } = useForm<FormData>();
+  const { errors } = formState;
+    
+  const onValidSubmit = (data: FieldValues) => {
+    console.log(data);
+  }
+
+  return (
+    <form onSubmit={handleSubmit(onValidSubmit)}>
+      <div>
+        <label htmlFor="name">Name: </label> 
+        <input
+          id="name"
+          type="text"
+          { ...register('name', { required: true, minLength: 3 }) }
+        />
+        {errors.name?.type === 'required' && (
+          <p>This field is required.</p>
+        )}
+        {errors.name?.type === 'minLength' && (
+          <p>The minimum length is 3 characters</p>
+        )}
+      </div>
+      <div>
+        <label htmlFor="age">Age: </label> 
+        <input
+          id="age"
+          type="number"
+          { ...register('age') }
+        />
+      </div>
+      <button type="submit">Submit</button>
+    </form>
+  );
+}
+
+#################################################
+FORMS WITH REACT HOOK FORM AND SCHEMA VALIDATION USING ZOD
+##################################################
+import { useForm, FieldValues } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+
+const schema = z.object({
+  name: z.string().min(3, {message: 'Name must be at least three characters'}),
+  age: z.number({invalid_type_error: 'Age is required'}).min(18)
+})
+
+
+type FormData = z.infer<typeof schema>;
+
+function Form() {
+  const {register, handleSubmit, formState } = useForm<FormData>({resolver: zodResolver(schema)});
+  const { errors, isValid } = formState;
+    
+  const onValidSubmit = (data: FieldValues) => {
+    console.log(data);
+  }
+
+  return (
+    <form onSubmit={handleSubmit(onValidSubmit)}>
+      <div>
+        <label htmlFor="name">Name: </label> 
+        <input
+          id="name"
+          type="text"
+          { ...register('name') }
+        />
+        {errors.name && (
+          <p>{errors.name.message}</p>
+        )}
+      </div>
+      <div>
+        <label htmlFor="age">Age: </label> 
+        <input
+          id="age"
+          type="number"
+          { ...register('age', {valueAsNumber: true}) }
+        />
+        {errors.age && (
+          <p>{errors.age.message}</p>
+        )}
+      </div>
+      <button type="submit" disabled={!isValid}>Submit</button>
+    </form>
+  );
+}
+
+#######################################
+UNDERSTANDING THE EFFECT HOOK
+######################################
+import { useEffect, useRef } from "react";
+
+interface MyComponentProps {
+  myDependency1: string;
+  myDependency2: number;
+}
+ 
+function MyComponent({myDependency1, myDependency2} : MyComponentProps) {
+  const inputElementRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    inputElementRef.current?.focus();
+  });
+
+  useEffect(() => {
+    document.title = 'My React App';
+  });
+
+
+/*
+  useEffect(() => {
+    // executes after each render
+  });
+
+
+  useEffect(() => {
+    // executes only once (which is after the component is first rendered)
+  }, []);
+
+  useEffect(() => {
+    // executes after the render when myDependency1 changes
+  }, [myDependency1]);
+
+
+  useEffect(() => {
+    // executes after the render when myDependency1 or myDependency2 changes
+  }, [myDependency1, myDependency2]);
+
+  
+  function doSomeWork { /* ... */ }
+  function someCleanupFunction { /* ... */ }
+
+  useEffect(() => {
+    doSomeWork();
+
+    // a cleanup function can be returned to clean up after the doSomeWork function
+
+    return someCleanupFunction; // <-- this function will get executed before the component is unmounted
+  });
+
+*/
+
+  return (
+    <div>
+      <input type="text" ref={inputElementRef} />
+    </div>
+  );
+}
+
+##########################################
+FETCHING DATA USING AXIOS WITH PROMISES
+##########################################
+import axios, { AxiosError } from "axios";
+import { useEffect, useState } from "react";
+
+interface User {
+  id: number;
+  name: string;
+}
+
+function HttpApp() {
+  const [ users, setUsers ] = useState<User[]>([]);
+  const [ error, setError ] = useState('');
+
+  useEffect(() => {
+    axios.get<User[]>('https://jsonplaceholder.typicode.com/users/')
+      .then((res) => setUsers(res.data))
+      .catch((err: AxiosError) => setError(err.message));
+  }, []);
+
+  return (
+    <>
+      {error && (
+        <p>{error}</p>
+      )}
+      <ul>
+        {users.map((user) => (
+          <li key={user.id}>{user.name}</li>
+        ))}
+      </ul>
+    </>
+  );
+}
+
+##############################################
+FETCHING DATA USING AXIOS WITH ASYNC/AWAIT
+##############################################
+import axios, { AxiosError } from "axios";
+import { useEffect, useState } from "react";
+
+interface User {
+  id: number;
+  name: string;
+}
+
+function HttpApp() {
+  const [ users, setUsers ] = useState<User[]>([]);
+  const [ error, setError ] = useState('');
+
+  useEffect(() => {
+   // the function given to the useEffect hook cannot be async so we must define an async function
+   //    inside the function given to the useEffect hook
+    ( 
+      async function fetchUsers() {
+        try {
+          const res = await axios.get<User[]>('https://jsonplaceholder.typicode.com/users/')
+          setUsers(res.data);
+        } catch(err) {
+          // type annotation is not allowed when doing catch(err), 
+          //     so we can do the following instead:
+          const axiosError = err as AxiosError;
+
+          setError(axiosError.message);
+        }
+      }
+    )();
+
+  }, []);
+
+  return (
+    <>
+      {error && (
+        <p>{error}</p>
+      )}
+      <ul>
+        {users.map((user) => (
+          <li key={user.id}>{user.name}</li>
+        ))}
+      </ul>
+    </>
+  );
+}
+
+#################################################
+FETCHING DATA USING AXIOS AND CANCELING REQUESTS
+#################################################
+import axios, { AxiosError, CanceledError } from "axios";
+import { useEffect, useState } from "react";
+
+interface User {
+  id: number;
+  name: string;
+}
+
+function HttpApp() {
+  const [ users, setUsers ] = useState<User[]>([]);
+  const [ error, setError ] = useState('');
+  
+
+  useEffect(() => {
+    const controller = new AbortController();
+    
+    axios.get<User[]>('https://jsonplaceholder.typicode.com/users/', { signal: controller.signal })
+      .then((res) => setUsers(res.data))
+      .catch((axiosError: AxiosError) => axiosError instanceof CanceledError ? null : setError(axiosError.message));
+
+    return () => controller.abort();
+
+  }, []);
+
+  return (
+    <>
+      {error && (
+        <p>{error}</p>
+      )}
+      <ul>
+        {users.map((user) => (
+          <li key={user.id}>{user.name}</li>
+        ))}
+      </ul>
+    </>
+  );
+}

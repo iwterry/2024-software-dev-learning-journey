@@ -1,0 +1,40 @@
+.first-name-input, 
+.last-name-input, 
+.email-input {
+  font-size: 18px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  padding-left: 16px;
+  padding-right: 16px;
+  border-radius: 8px;
+  border-color: rgb(188, 188, 188);
+  border-width: 1px;
+  border-style: solid;
+}
+
+.first-name-input,
+.last-name-input {
+  width: 140px;
+}
+
+.email-input {
+  width: 318px;
+  display: block; 
+  margin-top: 12px;
+  margin-bottom: 12px;
+}
+
+
+.sign-up-button {
+  border: none;
+  border-radius: 8px;
+  width: 352px;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  padding-left: 16px;
+  padding-right: 16px;
+  font-size: 20px;
+  font-weight: bold;
+  color: white;
+  background-color: rgb(77, 107, 245);
+}

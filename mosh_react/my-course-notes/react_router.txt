@@ -1,0 +1,110 @@
+#########################################################
+SETTING UP REACT ROUTER
+#########################################################
+--------------------------- FILE: main.tsx --------------------
+import React from 'react'
+import ReactDOM from 'react-dom/client';
+import { RouterProvider } from 'react-router-dom';
+import router from './routing/routes';
+
+ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
+  <React.StrictMode>
+    <RouterProvider router={router} />
+  </React.StrictMode>,
+)
+----------------------------- END -----------------------------
+
+CREATING ROUTES
+----------------------------- FILE: routes.tsx ----------------------
+import { createBrowserRouter } from "react-router-dom";
+import ErrorPage from "../pages/ErrorPage";
+import GameDetailPage from "../pages/GameDetailPage";
+import HomePage from "../pages/HomePage";
+import Layout from "../pages/Layout";
+
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <Layout />,
+    errorElement: (
+      <Layout>
+        <ErrorPage />
+      </Layout>
+    ),
+    children: [
+      {
+        path: '',
+        element: <HomePage />
+      },
+      {
+        path: 'games/:id',
+        element: <GameDetailPage />
+      }
+    ]
+  }
+]);
+
+// NOTE: the paths of the children are relative to their parent's path
+// NOTE: route params start with a colon (for example, :id)
+
+export default router;
+------------------------------ END -----------------------------
+
+-------------------------- FILE: Layout.tsx ----------------------
+import { ReactNode } from "react";
+import { Outlet } from "react-router-dom";
+import NavBar from "../components/NavBar";
+
+interface LayoutProps {
+  children?: ReactNode;
+}
+
+export default function Layout({ children }: LayoutProps) {
+  return (
+    <>
+      <NavBar />
+      {!Boolean(children) && <Outlet />}
+      {Boolean(children) && children }
+    </>
+  );
+}
+--------------------------- END ---------------------------
+
+-------------------------- FILE: ErrorPage.tsx ---------------------
+import { isRouteErrorResponse, useRouteError } from "react-router-dom"
+
+export default function ErrorPage() {
+  // get details about the error
+  const routeError =  useRouteError();
+
+  // check to see if the error is a routing error
+  const isRoutingError = isRouteErrorResponse(routeError); 
+
+  if (isRoutingError) {
+    return <p>Oops, this page does not exists.</p>;
+  }
+
+  // if not a routing error, then it is an application error
+  return <p>Sorry, an unexpected error occurred.</p>
+}
+-------------------------- END ---------------------------
+
+--------------------------- FILE: GameDetailPage.tsx ----------------
+import { useParams } from "react-router-dom";
+// import { useSearchParams } from "react-router-dom";
+
+export default function GameDetailPage() {
+  // accessing the route params
+  const { id } =  useParams();
+
+  //NOTE: query params can be access by using the hook useSearchParams
+  //  const [searchParams, setSearchParams] = useSearchParams();
+  // 
+
+  return (
+    <>
+	<p>{id}</p>
+    </>
+  );
+}
+--------------------------------- END --------------------------------

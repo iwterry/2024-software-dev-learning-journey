@@ -1,0 +1,47 @@
+.container {
+  display: inline-block;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.25);
+}
+
+.animal-image {
+  width: 160px;
+  height: 160px;
+  object-fit: cover;
+  object-position: center center;
+}
+
+.inner-container {
+  padding-left: 8px;
+  padding-right: 8px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+p {
+  font-family: Arial;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.name {
+  font-weight: bold;
+  margin-bottom: 5px;
+  font-size: 16px;
+}
+
+.friend-info {
+  font-size: 14px;
+  color: rgb(107, 107, 107);
+  margin-bottom: 8px;
+}
+
+.add-friend-button {
+  border: none;
+  background-color: rgb(48, 114, 255);
+  color: white;
+  padding-left: 16px;
+  padding-right: 16px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  border-radius: 4px;
+}

@@ -1,0 +1,41 @@
+.title {
+  font-size: 38px;
+  font-family: Arial;
+  margin-top: 0;
+  margin-bottom: 24px;
+}
+
+input, button {
+  border: none;
+  padding-left: 18px;
+  padding-right: 18px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  font-size: 15px;
+}
+
+input {
+  background-color: rgb(235, 235, 235);
+  display: block;
+  width: 370px;
+
+} 
+
+.pickup-input {
+  margin-bottom: 8px;
+}
+
+
+.destination-input {
+  margin-bottom: 30px;
+}
+
+.request-button {
+  color: white;
+  background-color: black;
+  margin-right: 18px;
+}
+
+.schedule-button {
+  background-color: rgb(235, 235, 235);
+}
