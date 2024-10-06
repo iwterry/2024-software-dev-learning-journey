@@ -30,5 +30,5 @@ The following are some of the things I accomplished as part of doing this projec
 The following are some of the things I accomplished as part of doing this project (as taken from the project's evaluation rubric):
  - using Eureka Server for service discovery
  - creating REST APIs
- - writing tests for the Vehicle API
- - using OpenAPI to document the Vehicle API 
+ - writing tests for the Vehicles API
+ - using OpenAPI to document the Vehicles API 
