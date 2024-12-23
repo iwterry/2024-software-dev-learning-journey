@@ -7,6 +7,7 @@ import com.jpmc.midascore.foundation.Transaction;
 import com.jpmc.midascore.repository.TransactionRepository;
 import com.jpmc.midascore.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TransactionRecorder {
@@ -24,6 +25,7 @@ public class TransactionRecorder {
     this.incentiveRetriever = incentiveRetriever;
   }
 
+  @Transactional(rollbackFor = Exception.class)
   public void recordValidTransaction(Transaction transaction) {
     UserRecord sender = userRepository.findById(transaction.getSenderId());
     if (sender == null) return;
